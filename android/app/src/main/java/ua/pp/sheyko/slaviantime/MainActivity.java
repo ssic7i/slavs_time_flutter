@@ -1,4 +1,4 @@
-package com.yourcompany.slaviantime;
+package ua.pp.sheyko.slaviantime;
 
 import android.os.Bundle;
 
