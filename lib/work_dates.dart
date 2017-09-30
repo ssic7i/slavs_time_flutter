@@ -204,6 +204,11 @@ class slav_time{
       days_in_cur_year = (days_between_dates - (year * __simple_year__)) + 1;
       days_in_cur_year = days_in_cur_year + 1;// because days_in_cur_year might be 0
 
+      if (days_in_cur_year > __simple_year__){
+        corr_year += 1;
+        days_in_cur_year = days_in_cur_year - __simple_year__;
+      }
+
       if ((days_in_cur_year >= 1) && (days_in_cur_year < 41+1)){
       // [1..41] 41
         month = 1;
