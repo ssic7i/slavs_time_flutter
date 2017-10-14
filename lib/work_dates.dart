@@ -121,6 +121,9 @@ class slav_time{
     int doley = ost_chastey % 1296;
 //    print("${ost_chastey} ${ost_chastey_raw}");
 //    print("${conv_hour} ${chastey} ${doley}");
+    if (conv_hour == 0) {
+      conv_hour = 16;
+    }
     this.hour = conv_hour;
     this.chast = chastey;
     this.doly = doley;
