@@ -18,6 +18,7 @@ class slav_time{
   int year_in_round_life;
   int year_in_round_years;
   String day_name;
+  int day_num;
   List days_names = ['Понедельникъ', 'Вторникъ', 'Тритейникъ', 'Четверикъ', 'Пятница', 'Шестица', 'Седьмица', 'Осьмица', 'Неделя'];
 
   slav_time(){ // constructor
@@ -70,30 +71,39 @@ class slav_time{
 //    print(day_num);
     if (day_num==1){
       this.day_name = 'Понедельникъ';
+      this.day_num = 1;
     }
     if (day_num==2){
       this.day_name = 'Вторникъ';
+      this.day_num = 2;
     }
     if (day_num==3){
       this.day_name = 'Тритейникъ';
+      this.day_num = 3;
     }
     if (day_num==4){
       this.day_name = 'Четверикъ';
+      this.day_num = 4;
     }
     if (day_num==5){
       this.day_name = 'Пятница';
+      this.day_num = 5;
     }
     if (day_num==6){
       this.day_name = 'Шестица';
+      this.day_num = 6;
     }
     if (day_num==7){
       this.day_name = 'Седьмица';
+      this.day_num = 7;
     }
     if (day_num==8){
       this.day_name = 'Осьмица';
+      this.day_num = 8;
     }
     if (day_num==9){
       this.day_name = 'Неделя';
+      this.day_num = 9;
     }
   }
 

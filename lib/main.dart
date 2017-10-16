@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   TextStyle base_textStyle40 = new TextStyle(
       inherit: true,
-      fontSize: 40.0,
+      fontSize: 35.0,
       color: Colors.blueGrey,
       );
 
@@ -82,6 +82,12 @@ class _MyHomePageState extends State<MyHomePage> {
     inherit: true,
     fontSize: 8.0,
     color: Colors.deepOrange,
+  );
+
+  TextStyle base_textStyle_age_info = new TextStyle(
+    inherit: true,
+    fontSize: 20.0,
+//    color: Colors.deepOrange,
   );
 
   Future<String> getFileData_years() async {
@@ -114,21 +120,21 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_year_num > 13){
       _year_num = 0;
     }
-    if(json_data == Null) {
+    if(json_data == null) {
       _add_years = 0;
       _year_name = "";
       _age_description = "";
     } else {
-      _add_years = json_data[_year_num.toString()]['add_years'];
-      _year_name = json_data[_year_num.toString()]['year_name'];
-      _age_description = json_data[_year_num.toString()]['age_description'];
+      _add_years = json_data['years'][_year_num.toString()]['add_years'];
+      _year_name = json_data['years'][_year_num.toString()]['year_name'];
+      _age_description = json_data['years'][_year_num.toString()]['age_description'];
     }
   }
 
   void _initial_set_parsed_data(){
-    _add_years = json_data[_year_num.toString()]['add_years'];
-    _year_name = json_data[_year_num.toString()]['year_name'];
-    _age_description = json_data[_year_num.toString()]['age_description'];
+    _add_years = json_data['years'][_year_num.toString()]['add_years'];
+    _year_name = json_data['years'][_year_num.toString()]['year_name'];
+    _age_description = json_data['years'][_year_num.toString()]['age_description'];
   }
 
   void _incrementCounter() {
@@ -156,6 +162,12 @@ class _MyHomePageState extends State<MyHomePage> {
   String hours_count_name = '';
   String chasty_count_name = '';
   String doly_count_name = '';
+  String current_month_name = '';
+  String current_month_description = '';
+  String hour_name = '';
+  String hour_description = '';
+  String day_description = '';
+  String day_patron = '';
 
 
 
@@ -174,7 +186,33 @@ class _MyHomePageState extends State<MyHomePage> {
       current_time_string_slav_date = slav_time_obj.day.toString();
       current_time_string_slav_year_roud_life = slav_time_obj.year_in_round_life.toString();
       current_time_string_slav_year_roud_years = slav_time_obj.year_in_round_years.toString();
-      current_time_string_slav_day_name = slav_time_obj.day_name.toString();
+      if(json_data == null){
+        current_time_string_slav_day_name = "";
+        current_month_name = "";
+        current_month_description = "";
+        hour_name = "";
+        hour_description = "";
+        day_description = "";
+        day_patron = "";
+      } else {
+        if (json_data.containsKey('day')) {
+          current_time_string_slav_day_name = json_data['day'][slav_time_obj.day_num.toString()]['name'];
+          current_month_name = json_data['month'][slav_time_obj.month.toString()]['name'];
+          current_month_description = json_data['month'][slav_time_obj.month.toString()]['description'];
+          hour_name = json_data['hour'][slav_time_obj.hour.toString()]['name'];
+          hour_description = json_data['hour'][slav_time_obj.hour.toString()]['description'];
+          day_description = json_data['day'][slav_time_obj.day_num.toString()]['description'];
+          day_patron = json_data['day'][slav_time_obj.day_num.toString()]['patron'];
+        } else {
+          current_time_string_slav_day_name = "";
+          current_month_name = "";
+          current_month_description = "";
+          hour_name = "";
+          hour_description = "";
+          day_description = "";
+          day_patron = "";
+        }
+      }
 
       hours_count_name = 'часов';
       if (slav_time_obj.hour > 4) {
@@ -254,27 +292,32 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (_screen_name){
     case 'time':
       body_screen = new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: new ListView(
+//          mainAxisAlignment: MainAxisAlignment.center,
+//          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             new Text('${current_time_string_slav_hours} ${hours_count_name}', style: base_textStyle40, ),
             new Text('${current_time_string_slav_chast} ${chasty_count_name}', style: base_textStyle40, ),
             new Text('${current_time_string_slav_doley} ${doly_count_name}', style: base_textStyle40, ),
-            new Text('${current_time_string_slav_day_name}', style: base_textStyle40,),
-            new Text('День ${current_time_string_slav_date}', style: base_textStyle40, ),
-            new Text('${current_time_string_slav_year_roud_life}-ое лето в круге жизни', style: base_textStyle40, textScaleFactor: 0.7, ),
-            new Text('${current_time_string_slav_year_roud_years}-ое лето в круге лет', style: base_textStyle40, textScaleFactor: 0.7, ),
-            new Text('${current_time_string_slav_year} лето от ${_year_name}', style: base_textStyle40, textScaleFactor: 0.7,),
+            new Text('${hour_name}, ${hour_description}', style: base_textStyle40, textScaleFactor: 0.6,),
+            new Text('${current_time_string_slav_day_name}, ${day_description}', style: base_textStyle40, textScaleFactor: 0.6,),
+            new Text('${current_time_string_slav_date}-й день', style: base_textStyle40, textScaleFactor: 0.8),
+            new Text("${current_month_name}. ${current_month_description}", style: base_textStyle40, textScaleFactor: 0.6,),
+            new Text('${current_time_string_slav_year_roud_life}-ое лето в круге жизни', style: base_textStyle40, textScaleFactor: 0.6, ),
+            new Text('${current_time_string_slav_year_roud_years}-ое лето в круге лет', style: base_textStyle40, textScaleFactor: 0.6, ),
+            new Text('${current_time_string_slav_year} лето от ${_year_name}', style: base_textStyle40, textScaleFactor: 0.6,),
             new Row(mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               new IconButton(icon: const Icon(Icons.calendar_today), onPressed: _change_year),
               new IconButton(icon: const Icon(Icons.info), onPressed: _show_year_info),
-            ],)
+            ],
+            )
 
 //            new IconButton(icon: const Icon(Icons.calendar_today), onPressed: _show_calendar)
           ],
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
         ),
       );
       break;
@@ -304,6 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _age_description,
               textAlign: TextAlign.left,
               softWrap: true,
+              style: base_textStyle_age_info,
             ),
           ],
           shrinkWrap: true,
