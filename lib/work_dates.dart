@@ -20,10 +20,10 @@ class slav_time{
   String day_name;
   int day_num;
   List days_names = ['Понедельникъ', 'Вторникъ', 'Тритейникъ', 'Четверикъ', 'Пятница', 'Шестица', 'Седьмица', 'Осьмица', 'Неделя'];
+  var timezone = new Duration(hours: 2);
 
   slav_time(){ // constructor
-    var timezone = new Duration(hours: 2);
-    this._current_date = new DateTime.now().add(timezone);
+    this._current_date = new DateTime.now().toUtc().add(this.timezone);
 //    print('##################');
 //    print(this._current_date);
     this._fill_time();
@@ -38,8 +38,8 @@ class slav_time{
   }
 
   slav_time.manual({int year: 2012, int month: 9, int day: 23, int hour: 18, int minute: 0, int second: 0}){
-    var timezone = new Duration(hours: 2);
-    this._current_date = new DateTime(year, month, day, hour, minute, second).add(timezone);
+
+    this._current_date = new DateTime(year, month, day, hour, minute, second).toUtc().add(this.timezone);
     this._fill_time();
     this._fill_date();
     this._fill_day();
@@ -51,8 +51,7 @@ class slav_time{
   }
 
   update_time(){
-    var timezone = new Duration(hours: 2);
-    this._current_date = new DateTime.now().add(timezone);
+    this._current_date = new DateTime.now().toUtc().add(this.timezone);
     this._fill_time();
     this._fill_date();
     this._fill_day();
@@ -64,7 +63,7 @@ class slav_time{
   }
 
   _fill_day(){
-    DateTime base_date = new DateTime(2012, 9, 22, 18, 0, 0);
+    DateTime base_date = new DateTime.utc(2012, 9, 22, 16, 0, 0).add(this.timezone);
     DateTime cur_date = this._current_date;
     int days_between_dates = (cur_date.difference(base_date).inDays);
     int day_num = (days_between_dates % 9) + 1;
@@ -151,7 +150,7 @@ class slav_time{
     // 23.09.2012 starts 3 of 4 parts of Svarogs day
     int day_before_base = __one_svarogs_day__ ~/ 2;
 
-    DateTime base_date = new DateTime(2012, 9, 22, 18, 0, 0);//.add(new Duration(days: 1));
+    DateTime base_date = new DateTime.utc(2012, 9, 22, 16, 0, 0).add(this.timezone);//.add(new Duration(days: 1));
     DateTime cur_date = this._current_date;
     int days_between_dates = (cur_date.difference(base_date).inDays) - 1;
 
@@ -299,6 +298,7 @@ class slav_time{
     out_str += ("---------------\n");
     out_str += ("Month: ${this.month}\n");
     out_str += ("Date: ${this.day}\n");
+    out_str += ("Date: ${this.day_name}\n");
     return out_str;
   }
 }
