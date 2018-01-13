@@ -20,9 +20,15 @@ class slav_time{
   String day_name;
   int day_num;
   List days_names = ['Понедельникъ', 'Вторникъ', 'Тритейникъ', 'Четверикъ', 'Пятница', 'Шестица', 'Седьмица', 'Осьмица', 'Неделя'];
-  var timezone = new Duration(hours: 2);
-
-  slav_time(){ // constructor
+//  var timezone = new Duration(hours: 2);
+  var timezone;
+  slav_time({int new_timezone}){ // constructor
+    if (new_timezone == null){
+      this.timezone = new Duration(hours: 2);
+    }
+    else{
+      this.timezone = new Duration(hours: new_timezone);
+    }
     this._current_date = new DateTime.now().toUtc().add(this.timezone);
 //    print('##################');
 //    print(this._current_date);
@@ -37,7 +43,13 @@ class slav_time{
 //    print();
   }
 
-  slav_time.manual({int year: 2012, int month: 9, int day: 23, int hour: 18, int minute: 0, int second: 0}){
+  slav_time.manual({int year: 2012, int month: 9, int day: 23, int hour: 18, int minute: 0, int second: 0, int new_timezone}){
+    if (new_timezone == null){
+      this.timezone = new Duration(hours: new_timezone);
+    }
+    else{
+      this.timezone = new Duration(hours: new_timezone);
+    }
 
     this._current_date = new DateTime(year, month, day, hour, minute, second).toUtc().add(this.timezone);
     this._fill_time();
