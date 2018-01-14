@@ -119,9 +119,9 @@ class slav_time{
   }
 
   _fill_time(){
-    int cur_hour = this._current_date.toUtc().hour;
-    int cur_minute = this._current_date.toUtc().minute;
-    int cur_seconds = this._current_date.toUtc().second;
+    int cur_hour = this._current_date.hour;
+    int cur_minute = this._current_date.minute;
+    int cur_seconds = this._current_date.second;
     if(cur_hour>18)
     {
       cur_hour = cur_hour - 18;
