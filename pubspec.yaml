@@ -4,11 +4,11 @@ description: A new Flutter project.
 dependencies:
   flutter:
     sdk: flutter
+  path_provider: "^0.3.1"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

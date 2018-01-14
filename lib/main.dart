@@ -5,6 +5,8 @@ import 'dart:core';
 import 'dart:async';
 import 'work_dates.dart' as slav_time_lib;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 //import 'dart:ui';
 
 void main() {
@@ -71,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _year_num = 0;
   String _age_description = "";
   String data_json = "";
+  int file_timezone = 2;
 
   TextStyle base_textStyle40 = new TextStyle(
       inherit: true,
@@ -94,6 +97,26 @@ class _MyHomePageState extends State<MyHomePage> {
     return await rootBundle.loadString('string_dir/ru_texts.json');
   }
 
+  Future<File> _getTimezoneFile() async {
+    // get the path to the document directory.
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    return new File('$dir/saved_tz.txt');
+  }
+
+  Future<int> _readTimezoneValue() async {
+    try {
+      File file = await _getTimezoneFile();
+      // read the variable as a string from the file.
+      String contents = await file.readAsString();
+      return int.parse(contents);
+    } on FileSystemException {
+      return file_timezone;
+    }
+  }
+
+  Future<Null> _write_tz() async{
+    await (await _getTimezoneFile()).writeAsString('$file_timezone');
+  }
   void _run_all(){
     _incrementCounter();
 //    if (_timer_started == false) {
@@ -113,6 +136,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _show_time(){
     _screen_name = 'time';
+  }
+
+  void _show_settings(){
+    _screen_name = 'settings';
+  }
+
+  void _up_timezone(){
+    file_timezone += 1;
+    if (file_timezone > 13){
+      file_timezone = -11;
+    }
+    _write_tz();
+  }
+
+  void _down_timezone(){
+    file_timezone -= 1;
+    if (file_timezone < -11){
+      file_timezone = 13;
+    }
+    _write_tz();
   }
 
   void _change_year(){
@@ -176,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(()
     {
       current_time_string = new DateTime.now().toString();
-      slav_time_obj = new slav_time_lib.slav_time();
+      slav_time_obj = new slav_time_lib.slav_time(new_timezone: file_timezone);
 //      slav_time_obj.update_time();
       _days_names = slav_time_obj.days_names;
       current_time_string_slav_hours = slav_time_obj.hour.toString();
@@ -260,6 +303,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void start_timer(){
     new Timer.periodic(const Duration(milliseconds: 1000), handleTimeout);
     print('timer started');
+    _readTimezoneValue().then((int tz_val){
+        file_timezone = tz_val;
+      }
+    );
     getFileData_years().then((String value){
       print('getting file data');
       data_json = value;
@@ -311,6 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               new IconButton(icon: const Icon(Icons.calendar_today), onPressed: _change_year),
               new IconButton(icon: const Icon(Icons.info), onPressed: _show_year_info),
+              new IconButton(icon: const Icon(Icons.settings), onPressed: _show_settings),
             ],
             )
 
@@ -340,19 +388,66 @@ class _MyHomePageState extends State<MyHomePage> {
       break;
     case 'year_info':
       body_screen = new Center(
-        child: new ListView(
-          children: <Widget>[
-            new IconButton(icon: const Icon(Icons.arrow_back), onPressed: _show_time),
-            new Text(
-              _age_description,
-              textAlign: TextAlign.left,
-              softWrap: true,
-              style: base_textStyle_age_info,
-            ),
-          ],
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
+        child: new Align(
+          alignment: new Alignment(-1.0, -1.0),
+          child: new ListView(
+            children: <Widget>[
+              new Align(
+                alignment: new Alignment(-1.0, -1.0),
+                child: new IconButton(icon: const Icon(Icons.arrow_back), onPressed: _show_time),
+              ),
+              new Text(
+                _age_description,
+                textAlign: TextAlign.left,
+                softWrap: true,
+                style: base_textStyle_age_info,
+              ),
+            ],
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+          ),
         )
+      );
+      break;
+    case 'settings':
+      String timezone_text =  "${file_timezone}";
+      if (file_timezone > 0){
+        timezone_text = "+${timezone_text}";
+      }
+      body_screen = new Center(
+          child: new Align( 
+            alignment: new Alignment(-1.0, -1.0),
+            child: new ListView(
+              children: <Widget>[
+                new Align(
+                  alignment: new Alignment(-1.0, -1.0),
+                  child: new IconButton(icon: const Icon(Icons.arrow_back), onPressed: _show_time),
+                ),
+                new Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Text(
+                      "Часовой пояс:",
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                      style: base_textStyle_age_info,
+                    ),
+                    new Text(
+                      timezone_text,
+                      textAlign: TextAlign.left,
+                      softWrap: false,
+                      style: base_textStyle_age_info,
+                    ),
+                    new IconButton(icon: const Icon(Icons.add), onPressed: _up_timezone),
+                    new IconButton(icon: const Icon(Icons.remove), onPressed: _down_timezone),
+                  ],
+                ),
+              ],
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+            )
+          )
       );
       break;
     }
