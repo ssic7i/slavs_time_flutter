@@ -44,21 +44,21 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  // This widget is the home page of your application. It is stateful,
-  // meaning that it has a State object (defined below) that contains
-  // fields that affect how it looks.
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  // This class is the configuration for the state. It holds the
-  // values (in this case the title) provided by the parent (in this
-  // case the App widget) and used by the build method of the State.
-  // Fields in a Widget subclass are always marked "final".
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
 
   final String title;
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
-
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var slav_time_obj;
 
   String _screen_name = 'time';
-  Map json_data;
+  Map<String, dynamic> json_data = {};
   int _add_years = 0;
   String _year_name = '';
   int _year_num = 0;
@@ -310,7 +310,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getFileData_years().then((String value){
       print('getting file data');
       data_json = value;
-      json_data = JSON.decode(data_json);
+      json_data = jsonDecode(data_json);
       _initial_set_parsed_data();
       },
         onError: (e) {

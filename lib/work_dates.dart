@@ -1,34 +1,31 @@
 import 'dart:io';
+import 'dart:convert';
 
 class slav_time{
 
-  int hour;
-  int chast;
-  int doly;
+  int hour = 0;
+  int chast = 0;
+  int doly = 0;
   var _current_date;
 
-  int svarog_day;
-  int life_round;
-  int year_round;
-  int year;
-  int month;
-  int day;
+  int svarog_day = 0;
+  int life_round = 0;
+  int year_round = 0;
+  int year = 0;
+  int month = 0;
+  int day = 0;
 
-  int year_spsc;
-  int year_in_round_life;
-  int year_in_round_years;
-  String day_name;
-  int day_num;
+  int year_spsc = 0;
+  int year_in_round_life = 0;
+  int year_in_round_years = 0;
+  String day_name = '';
+  int day_num = 0;
   List days_names = ['Понедельникъ', 'Вторникъ', 'Тритейникъ', 'Четверикъ', 'Пятница', 'Шестица', 'Седьмица', 'Осьмица', 'Неделя'];
 //  var timezone = new Duration(hours: 2);
   var timezone;
-  slav_time({int new_timezone}){ // constructor
-    if (new_timezone == null){
-      this.timezone = new Duration(hours: 2);
-    }
-    else{
-      this.timezone = new Duration(hours: new_timezone);
-    }
+  slav_time({int new_timezone = 0}){ // constructor
+
+    this.timezone = new Duration(hours: new_timezone);
     this._current_date = new DateTime.now().toUtc().add(this.timezone);
 //    print('##################');
 //    print(this._current_date);
@@ -43,7 +40,7 @@ class slav_time{
 //    print();
   }
 
-  slav_time.manual({int year: 2012, int month: 9, int day: 23, int hour: 18, int minute: 0, int second: 0, int new_timezone}){
+  slav_time.manual({int year: 2012, int month: 9, int day: 23, int hour: 18, int minute: 0, int second: 0, int new_timezone: 0}){
     if (new_timezone == null){
       this.timezone = new Duration(hours: new_timezone);
     }

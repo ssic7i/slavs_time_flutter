@@ -1,5 +1,16 @@
-# slavs_time_flutter
+# slavian_calendar
 
-icon: https://www.iconfinder.com/icons/61580/calendar_date_green_icon#size=512
+Slavian Calendar and clock
 
-app: https://play.google.com/store/apps/details?id=ua.pp.sheyko.slaviantime
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
