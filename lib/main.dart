@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String _screen_name = 'time';
   Map<String, dynamic> json_data = {};
+  String _current_lang = 'ru';
   int _add_years = 0;
   String _year_name = '';
   int _year_num = 0;
@@ -93,14 +94,20 @@ class _MyHomePageState extends State<MyHomePage> {
 //    color: Colors.deepOrange,
   );
 
-  Future<String> getFileData_years() async {
-    return await rootBundle.loadString('string_dir/ru_texts.json');
+  Future<String> getFileData_years(String langName) async {
+    return await rootBundle.loadString('string_dir/' + langName + '_texts.json');
   }
 
   Future<File> _getTimezoneFile() async {
     // get the path to the document directory.
     String dir = (await getApplicationDocumentsDirectory()).path;
     return new File('$dir/saved_tz.txt');
+  }
+
+  Future<File> _getLangFile() async {
+    // get the path to the document directory.
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    return new File('$dir/saved_lang.txt');
   }
 
   Future<int> _readTimezoneValue() async {
@@ -112,6 +119,22 @@ class _MyHomePageState extends State<MyHomePage> {
     } on FileSystemException {
       return file_timezone;
     }
+  }
+
+  Future<String> _readLangValue() async {
+    try {
+      File file = await _getLangFile();
+      // read the variable as a string from the file.
+      String contents = await file.readAsString();
+      print('_readLangValue->'+ contents);
+      return contents.trim();
+    } on FileSystemException {
+      return _current_lang;
+    }
+  }
+
+  Future<Null> _write_lang() async{
+    await (await _getLangFile()).writeAsString(_current_lang);
   }
 
   Future<Null> _write_tz() async{
@@ -148,6 +171,32 @@ class _MyHomePageState extends State<MyHomePage> {
       file_timezone = -11;
     }
     _write_tz();
+  }
+
+  void _change_lang(){
+    print('current language: ' + _current_lang);
+    if (_current_lang == 'ru'){
+      _current_lang = 'en';
+    } else{
+      _current_lang = 'ru';
+    }
+    print('new lang: ' + _current_lang);
+    _write_lang();
+
+    getFileData_years(_current_lang).then((String value){
+      print('getting file data(change lang)');
+      print('current lang: ' + _current_lang);
+      data_json = value;
+      json_data = jsonDecode(data_json);
+      _initial_set_parsed_data();
+    },
+        onError: (e) {
+          print('file not prepared');
+          data_json = 'exeption ${e}';
+          json_data = {};
+        }
+    );
+
   }
 
   void _down_timezone(){
@@ -307,17 +356,23 @@ class _MyHomePageState extends State<MyHomePage> {
         file_timezone = tz_val;
       }
     );
-    getFileData_years().then((String value){
-      print('getting file data');
-      data_json = value;
-      json_data = jsonDecode(data_json);
-      _initial_set_parsed_data();
+
+    _readLangValue().then((value){
+      _current_lang=value;
+      getFileData_years(_current_lang).then((String value){
+        print('getting file data(start timer)');
+        print('current lang: ' + _current_lang);
+        data_json = value;
+        json_data = jsonDecode(data_json);
+        _initial_set_parsed_data();
       },
-        onError: (e) {
-          print('file not prepared');
-          data_json = 'exeption ${e}';
-          json_data = {};
-        }
+          onError: (e) {
+            print('file not prepared');
+            data_json = 'exeption ${e}';
+            json_data = {};
+          }
+      );
+      }
     );
   }
 
@@ -441,6 +496,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     new IconButton(icon: const Icon(Icons.add), onPressed: _up_timezone),
                     new IconButton(icon: const Icon(Icons.remove), onPressed: _down_timezone),
+                  ],
+                ),
+                new Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Text(
+                      "Lang:",
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                      style: base_textStyle_age_info,
+                    ),
+                    new Text(
+                      _current_lang,
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                      style: base_textStyle_age_info,
+                    ),
+                    new IconButton(icon: const Icon(Icons.language), onPressed: _change_lang),
                   ],
                 ),
               ],
