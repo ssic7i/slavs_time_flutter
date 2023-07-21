@@ -7,6 +7,8 @@ import 'work_dates.dart' as slav_time_lib;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:geolocator/geolocator.dart';
+
 //import 'dart:ui';
 
 void main() {
@@ -207,6 +209,11 @@ class _MyHomePageState extends State<MyHomePage> {
     _write_tz();
   }
 
+  void _get_timezone() async{
+    file_timezone = await getCurrentTimezone();
+    _write_tz();
+  }
+
   void _change_year(){
     _year_num += 1;
     if (_year_num > 13){
@@ -349,11 +356,36 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<int> getCurrentTimezone() async {
+    try{
+      var locationPermission = await Geolocator.requestPermission();
+      print(locationPermission);
+      var position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      // Print the user's latitude and longitude.
+      print(position.latitude);
+      print(position.longitude);
+      print(position.timestamp);
+      var local_time = DateTime.now();
+      int local_tz = local_time.timeZoneOffset.inHours;
+      print(local_time);
+
+      // Print the hours.
+      print(local_tz);
+
+      return local_tz;
+      //ToDo: add calculation by gps sphere coordinates
+    } catch (e){
+      return 0;
+    }
+  }
+
   void start_timer(){
     new Timer.periodic(const Duration(milliseconds: 1000), handleTimeout);
     print('timer started');
-    _readTimezoneValue().then((int tz_val){
-        file_timezone = tz_val;
+    _readTimezoneValue().then((int tzVal){
+        file_timezone = tzVal;
       }
     );
 
@@ -389,11 +421,11 @@ class _MyHomePageState extends State<MyHomePage> {
       start_timer();
     }
 
-    var body_screen = new Center();
+    var bodyScreen = new Center();
 
     switch (_screen_name){
     case 'time':
-      body_screen = new Center(
+      bodyScreen = new Center(
         child: new ListView(
 //          mainAxisAlignment: MainAxisAlignment.center,
 //          crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,24 +457,24 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       break;
     case 'calendar':
-      var header_array = <Widget>[];
+      var headerArray = <Widget>[];
       for( String day_name in _days_names){
-        header_array.add(new Text(day_name, style: base_textStyle10, softWrap: false,));
+        headerArray.add(new Text(day_name, style: base_textStyle10, softWrap: false,));
       }
-      var table_header = new TableRow(children: header_array);
-      body_screen = new Center(
+      var tableHeader = new TableRow(children: headerArray);
+      bodyScreen = new Center(
       child: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            new Table(children: <TableRow>[table_header], defaultColumnWidth: new FixedColumnWidth(30.0),),
+            new Table(children: <TableRow>[tableHeader], defaultColumnWidth: new FixedColumnWidth(30.0),),
             new IconButton(icon: const Icon(Icons.arrow_back), onPressed: _show_time)
           ],
         ),
       );
       break;
     case 'year_info':
-      body_screen = new Center(
+      bodyScreen = new Center(
         child: new Align(
           alignment: new Alignment(-1.0, -1.0),
           child: new ListView(
@@ -465,11 +497,11 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       break;
     case 'settings':
-      String timezone_text =  "${file_timezone}";
+      String timezoneText =  "${file_timezone}";
       if (file_timezone > 0){
-        timezone_text = "+${timezone_text}";
+        timezoneText = "+${timezoneText}";
       }
-      body_screen = new Center(
+      bodyScreen = new Center(
           child: new Align( 
             alignment: new Alignment(-1.0, -1.0),
             child: new ListView(
@@ -489,7 +521,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: base_textStyle_age_info,
                     ),
                     new Text(
-                      timezone_text,
+                      timezoneText,
                       textAlign: TextAlign.left,
                       softWrap: false,
                       style: base_textStyle_age_info,
@@ -517,6 +549,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     new IconButton(icon: const Icon(Icons.language), onPressed: _change_lang),
                   ],
                 ),
+                new Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Text(
+                      "Calc Timezone:",
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                      style: base_textStyle_age_info,
+                    ),
+                    new Text(
+                      _current_lang,
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                      style: base_textStyle_age_info,
+                    ),
+                    new IconButton(icon: const Icon(Icons.edit_location_rounded), onPressed: _get_timezone),
+                  ],
+                ),
               ],
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
@@ -532,7 +583,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // our appbar title.
         title: new Text(widget.title),
       ),
-      body: body_screen
+      body: bodyScreen
  // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
